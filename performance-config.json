@@ -1,0 +1,32 @@
+{
+  "crawling": {
+    "defaultTimeout": 15000,
+    "maxContentSize": 10485760,
+    "maxRedirects": 3,
+    "connectionPool": {
+      "maxSockets": 10,
+      "maxFreeSockets": 5,
+      "keepAlive": true,
+      "keepAliveMsecs": 1000
+    }
+  },
+  "caching": {
+    "enabled": true,
+    "defaultTTL": 300000,
+    "maxCacheSize": 100
+  },
+  "parsing": {
+    "removeUnnecessaryElements": true,
+    "normalizeWhitespace": true,
+    "optimizeSelectors": true
+  },
+  "fastModeUrls": [
+    "httpbin.org",
+    "example.com",
+    "jsonplaceholder.typicode.com"
+  ],
+  "slowModeUrls": [
+    "javascript-heavy-site.com",
+    "slow-loading-site.com"
+  ]
+}

@@ -6,18 +6,49 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
-import axios from 'axios';
+import axios, { AxiosInstance } from 'axios';
 import * as cheerio from 'cheerio';
 import TurndownService from 'turndown';
 import { URL } from 'url';
+import { Agent } from 'http';
+import { Agent as HttpsAgent } from 'https';
 
 class CrawlPageServer {
   private server: Server;
   private turndownService: TurndownService;
   private debug: boolean;
+  private axiosInstance: AxiosInstance;
+  private cache: Map<string, { content: any; timestamp: number; ttl: number }>;
 
   constructor() {
     this.debug = process.env.DEBUG === 'true';
+    
+    // 初始化缓存
+    this.cache = new Map();
+    
+    // 创建优化的 axios 实例
+    this.axiosInstance = axios.create({
+      // 连接池配置
+      httpAgent: new Agent({
+        keepAlive: true,
+        keepAliveMsecs: 1000,
+        maxSockets: 5,
+        maxFreeSockets: 2,
+        timeout: 3000, // 连接超时3秒
+      }),
+      httpsAgent: new HttpsAgent({
+        keepAlive: true,
+        keepAliveMsecs: 1000,
+        maxSockets: 5,
+        maxFreeSockets: 2,
+        timeout: 3000, // 连接超时3秒
+      }),
+      // 全局配置
+      timeout: 5000, // 进一步减少到5秒超时
+      maxRedirects: 1, // 最多1次重定向
+      maxContentLength: 10 * 1024 * 1024, // 增加到10MB限制
+      validateStatus: (status) => status < 500, // 接受4xx状态码
+    });
     this.server = new Server(
       {
         name: 'crawl-page-mcp-server',
@@ -38,6 +69,42 @@ class CrawlPageServer {
   private debugLog(...args: any[]) {
     if (this.debug) {
       console.error('[DEBUG]', new Date().toISOString(), ...args);
+    }
+  }
+
+  private getCacheKey(url: string, format: string, selector?: string): string {
+    return `${url}:${format}:${selector || 'default'}`;
+  }
+
+  private getFromCache(key: string): any | null {
+    const cached = this.cache.get(key);
+    if (!cached) return null;
+    
+    const now = Date.now();
+    if (now - cached.timestamp > cached.ttl) {
+      this.cache.delete(key);
+      return null;
+    }
+    
+    this.debugLog(`Cache hit for key: ${key}`);
+    return cached.content;
+  }
+
+  private setCache(key: string, content: any, ttl: number = 300000): void { // 默认5分钟TTL
+    this.cache.set(key, {
+      content,
+      timestamp: Date.now(),
+      ttl
+    });
+    this.debugLog(`Cached content for key: ${key}`);
+  }
+
+  private clearExpiredCache(): void {
+    const now = Date.now();
+    for (const [key, cached] of this.cache.entries()) {
+      if (now - cached.timestamp > cached.ttl) {
+        this.cache.delete(key);
+      }
     }
   }
 
@@ -74,6 +141,11 @@ class CrawlPageServer {
                   type: 'string',
                   default: 'Mozilla/5.0 (compatible; CrawlPageMCP/1.0)',
                   description: '自定义User-Agent字符串',
+                },
+                useCache: {
+                  type: 'boolean',
+                  default: true,
+                  description: '是否使用缓存（默认5分钟TTL）',
                 },
               },
               required: ['url'],
@@ -145,6 +217,7 @@ class CrawlPageServer {
       selector,
       timeout = 10000,
       userAgent = 'Mozilla/5.0 (compatible; CrawlPageMCP/1.0)',
+      useCache = true,
     } = args;
 
     // 验证URL
@@ -154,21 +227,66 @@ class CrawlPageServer {
       throw new Error('无效的URL地址');
     }
 
-    // 发送HTTP请求
-    const response = await axios.get(url, {
-      timeout,
+    // 检查缓存
+    const cacheKey = this.getCacheKey(url, format, selector);
+    if (useCache) {
+      const cached = this.getFromCache(cacheKey);
+      if (cached) {
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify({
+                ...cached,
+                fromCache: true,
+              }, null, 2),
+            },
+          ],
+        };
+      }
+    }
+
+    // 清理过期缓存
+    this.clearExpiredCache();
+
+    // 发送HTTP请求 - 优化版本，添加严格超时控制
+    const startTime = Date.now();
+    const effectiveTimeout = Math.min(timeout, 6000); // 最大6秒
+    
+    // 创建超时Promise
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      setTimeout(() => reject(new Error(`请求超时: ${effectiveTimeout}ms`)), effectiveTimeout);
+    });
+    
+    // 创建请求Promise
+    const requestPromise = this.axiosInstance.get(url, {
+      timeout: effectiveTimeout,
       headers: {
         'User-Agent': userAgent,
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
-        'Accept-Encoding': 'gzip, deflate',
+        'Accept-Encoding': 'gzip, deflate, br',
         'Connection': 'keep-alive',
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache',
       },
     });
+    
+    // 使用Promise.race确保严格超时
+    const response = await Promise.race([requestPromise, timeoutPromise]);
+    
+    const requestTime = Date.now() - startTime;
+    this.debugLog(`HTTP request completed in ${requestTime}ms`);
 
     const html = response.data;
-    const $ = cheerio.load(html);
-
+    
+    // 优化的HTML解析
+    const parseStartTime = Date.now();
+    const $ = cheerio.load(html, {
+      // 优化选项
+      xmlMode: false,
+    });
+    
     // 如果指定了选择器，只提取匹配的内容
     let content: string;
     const targetElement = selector ? $(selector) : $('body');
@@ -177,39 +295,55 @@ class CrawlPageServer {
       throw new Error(selector ? `未找到匹配选择器 "${selector}" 的元素` : '页面内容为空');
     }
 
+    // 优化内容提取
     switch (format) {
       case 'html':
         content = targetElement.html() || '';
         break;
       case 'text':
-        content = targetElement.text().trim();
+        // 移除脚本和样式标签以提高性能
+        targetElement.find('script, style, noscript').remove();
+        content = targetElement.text().replace(/\s+/g, ' ').trim();
         break;
       case 'markdown':
       default:
+        // 移除不需要的元素以提高转换速度
+        targetElement.find('script, style, noscript, iframe, embed, object').remove();
         const htmlContent = targetElement.html() || '';
         content = this.turndownService.turndown(htmlContent);
         break;
     }
+    
+    const parseTime = Date.now() - parseStartTime;
+    this.debugLog(`HTML parsing completed in ${parseTime}ms`);
 
     // 获取页面元数据
     const title = $('title').text().trim();
     const description = $('meta[name="description"]').attr('content') || '';
     const keywords = $('meta[name="keywords"]').attr('content') || '';
 
+    const result = {
+      url,
+      title,
+      description,
+      keywords,
+      format,
+      content,
+      contentLength: content.length,
+      timestamp: new Date().toISOString(),
+      requestTime: Date.now() - startTime,
+    };
+
+    // 缓存结果
+    if (useCache) {
+      this.setCache(cacheKey, result);
+    }
+
     return {
       content: [
         {
           type: 'text',
-          text: JSON.stringify({
-            url,
-            title,
-            description,
-            keywords,
-            format,
-            content,
-            contentLength: content.length,
-            timestamp: new Date().toISOString(),
-          }, null, 2),
+          text: JSON.stringify(result, null, 2),
         },
       ],
     };

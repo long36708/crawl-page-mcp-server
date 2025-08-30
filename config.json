@@ -1,0 +1,22 @@
+{
+  "timeout": {
+    "global": 5000,
+    "connection": 3000,
+    "request": 4000
+  },
+  "limits": {
+    "maxRedirects": 1,
+    "maxContentLength": 10485760,
+    "maxSockets": 5
+  },
+  "cache": {
+    "enabled": true,
+    "ttl": 300000
+  },
+  "headers": {
+    "userAgent": "Mozilla/5.0 (compatible; CrawlPageMCP/1.0)",
+    "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "acceptLanguage": "zh-CN,zh;q=0.9,en;q=0.8",
+    "acceptEncoding": "gzip, deflate, br"
+  }
+}
