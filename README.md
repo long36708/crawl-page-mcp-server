@@ -187,6 +187,36 @@ npm run debug
 - **cheerio**: 服务端jQuery实现
 - **turndown**: HTML到Markdown转换器
 
+## 依赖打包说明
+
+本项目使用 **esbuild** 将所有第三方依赖打包到单个可执行文件中，用户无需单独安装 axios、cheerio、turndown 等依赖。
+
+### 打包策略
+- **包含的依赖**: axios, cheerio, turndown, url 等所有运行时依赖
+- **外部依赖**: 仅保留 @modelcontextprotocol/sdk 作为外部依赖
+- **文件大小**: 约 3.0MB（包含所有依赖）
+- **格式**: CommonJS with shebang，可直接执行
+
+### 构建过程
+```bash
+# 开发时使用 tsx 直接运行 TypeScript
+npm run dev
+
+# 构建时使用 esbuild 打包所有依赖
+npm run build
+```
+
+### 为什么使用 esbuild 而不是 tsx？
+- **tsx**: 仅为 TypeScript 运行时工具，不能打包依赖
+- **tsc**: TypeScript 编译器，只编译不打包，依赖仍为外部引用
+- **esbuild**: 真正的打包工具，能将依赖打包到单个文件中
+
+这种方案确保了：
+- ✅ **用户体验**: 只需安装一个包即可使用
+- ✅ **依赖管理**: 避免版本冲突和依赖缺失
+- ✅ **部署简单**: 单文件部署，无需额外配置
+- ✅ **性能优化**: 减少模块解析时间
+
 ## 开发
 
 ### 项目结构
@@ -241,9 +271,11 @@ npm run test:crawl
 
 详细文档请查看 [docs](./docs/) 目录：
 
+- 🚀 [快速开始](./docs/quick-start.md) - 快速上手指南
 - 📖 [API参考文档](./docs/api-reference.md) - 详细的API接口说明
 - 💡 [使用示例](./docs/examples.md) - 丰富的使用示例和应用场景
 - 🔧 [调试指南](./docs/debugging.md) - 完整的调试方法和工具
+- ⚡ [超时优化](./docs/timeout-optimization.md) - 性能优化和超时问题解决
 - 🔍 [Inspector调试](./docs/inspector-debugging.md) - 使用MCP Inspector进行可视化调试
 - 🚨 [故障排除](./docs/troubleshooting.md) - 常见问题解决方案
 

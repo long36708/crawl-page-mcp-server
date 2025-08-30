@@ -453,7 +453,7 @@ Crawl Page MCP Server v1.0.0
 环境变量:
   DEBUG=true                    启用调试日志
 
-更多信息请访问: https://github.com/your-username/crawl-page-mcp-server
+更多信息请访问: https://github.com/long36708/crawl-page-mcp-server
 `);
   process.exit(0);
 }

@@ -1,38 +1,44 @@
 {
   "name": "crawl-page-mcp-server",
-  "version": "1.0.0",
+  "version": "1.0.5",
   "description": "MCP server for crawling web pages and converting to markdown",
   "main": "dist/index.js",
-  "type": "module",
+
   "bin": {
-    "crawl-page-mcp": "dist/index.js",
-    "crawl-page-debug": "debug-server.js"
+    "crawl-page-mcp-server": "./dist/index.js"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "npm run build:bundle",
+    "build:tsc": "tsc",
+    "build:bundle": "esbuild src/index.ts --bundle --platform=node --target=node18 --format=cjs --outfile=dist/index.js --external:@modelcontextprotocol/sdk && node scripts/add-shebang.js",
     "start": "node dist/index.js",
     "dev": "tsx src/index.ts",
-    "debug": "node debug-server.js",
+    "debug": "node test/debug-server.js",
     "inspector": "./start-inspector-basic.sh",
     "inspector:smart": "./start-inspector-smart.sh",
     "inspector:simple": "npx @modelcontextprotocol/inspector",
-    "test": "jest",
-    "test:crawl": "node test-crawl.js",
-    "test:performance": "node performance-test.js",
+    "test": "node test/quick-test.mjs",
+    "test:crawl": "node test/quick-test.mjs",
+    "test:performance": "node test/performance-test.js",
+    "test:large": "node test/test-large-content.mjs",
     "debug:build": "npm run build && npm run debug",
-    "prepublishOnly": "npm run build",
-    "postinstall": "npm run build"
+    "prepublishOnly": "npm run build"
   },
-  "keywords": ["mcp", "web-crawling", "markdown", "scraping"],
-  "author": "",
+  "keywords": [
+    "mcp",
+    "web-crawling",
+    "markdown",
+    "scraping"
+  ],
+  "author": "longmo",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/crawl-page-mcp-server.git"
+    "url": "https://github.com/long36708/crawl-page-mcp-server.git"
   },
   "files": [
     "dist/",
-    "debug-server.js",
+    "test/",
     "README.md",
     "docs/",
     "package.json"
@@ -47,6 +53,7 @@
   "devDependencies": {
     "@types/node": "^20.0.0",
     "@types/turndown": "^5.0.4",
+    "esbuild": "^0.25.9",
     "tsx": "^4.0.0",
     "typescript": "^5.0.0"
   }

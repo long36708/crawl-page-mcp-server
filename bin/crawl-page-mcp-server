@@ -1,0 +1,18 @@
+#!/usr/bin/env node
+
+const { spawn } = require('child_process');
+const path = require('path');
+
+// 获取tsx和源文件的路径
+const tsxPath = path.join(__dirname, '..', 'node_modules', '.bin', 'tsx');
+const srcPath = path.join(__dirname, '..', 'src', 'index.ts');
+
+// 使用tsx运行TypeScript源文件
+const child = spawn('node', [tsxPath, srcPath, ...process.argv.slice(2)], {
+  stdio: 'inherit',
+  cwd: path.dirname(__dirname)
+});
+
+child.on('exit', (code) => {
+  process.exit(code);
+});
