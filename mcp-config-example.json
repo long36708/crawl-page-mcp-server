@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "crawl-page": {
+      "command": "node",
+      "args": ["./dist/index.js"],
+      "cwd": "/Users/longmo/code/crawl-page-mcp-server"
+    }
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "testCases": [
+    {
+      "name": "基本HTML抓取",
+      "tool": "crawl_page",
+      "arguments": {
+        "url": "https://httpbin.org/html",
+        "format": "markdown"
+      },
+      "description": "测试基本的HTML页面抓取和Markdown转换"
+    },
+    {
+      "name": "纯文本提取",
+      "tool": "crawl_page",
+      "arguments": {
+        "url": "https://httpbin.org/html",
+        "format": "text"
+      },
+      "description": "测试HTML到纯文本的转换"
+    },
+    {
+      "name": "CSS选择器测试",
+      "tool": "crawl_page",
+      "arguments": {
+        "url": "https://httpbin.org/html",
+        "format": "markdown",
+        "selector": "h1"
+      },
+      "description": "测试CSS选择器功能"
+    },
+    {
+      "name": "链接提取",
+      "tool": "extract_links",
+      "arguments": {
+        "url": "https://httpbin.org/links/5"
+      },
+      "description": "测试页面链接提取功能"
+    },
+    {
+      "name": "链接过滤",
+      "tool": "extract_links",
+      "arguments": {
+        "url": "https://httpbin.org/links/10",
+        "filterPattern": ".*\\/links\\/.*"
+      },
+      "description": "测试链接过滤功能"
+    },
+    {
+      "name": "超时测试",
+      "tool": "crawl_page",
+      "arguments": {
+        "url": "https://httpbin.org/delay/2",
+        "timeout": 5000,
+        "format": "text"
+      },
+      "description": "测试超时处理"
+    },
+    {
+      "name": "自定义User-Agent",
+      "tool": "crawl_page",
+      "arguments": {
+        "url": "https://httpbin.org/user-agent",
+        "format": "text",
+        "userAgent": "MCP-Inspector-Test/1.0"
+      },
+      "description": "测试自定义User-Agent"
+    }
+  ],
+  "errorTestCases": [
+    {
+      "name": "无效URL测试",
+      "tool": "crawl_page",
+      "arguments": {
+        "url": "invalid-url",
+        "format": "markdown"
+      },
+      "description": "测试无效URL的错误处理",
+      "expectError": true
+    },
+    {
+      "name": "404错误测试",
+      "tool": "crawl_page",
+      "arguments": {
+        "url": "https://httpbin.org/status/404",
+        "format": "markdown"
+      },
+      "description": "测试404错误的处理",
+      "expectError": true
+    },
+    {
+      "name": "无效选择器测试",
+      "tool": "crawl_page",
+      "arguments": {
+        "url": "https://httpbin.org/html",
+        "format": "markdown",
+        "selector": ".non-existent-class"
+      },
+      "description": "测试无效CSS选择器的错误处理",
+      "expectError": true
+    }
+  ]
+}
