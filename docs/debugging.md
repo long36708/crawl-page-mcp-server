@@ -19,14 +19,14 @@ node debug-server.js
 
 #### 可用命令
 
-| 命令 | 语法 | 描述 |
-|------|------|------|
-| `list` | `list` | 列出所有可用工具 |
-| `crawl` | `crawl <url> [format] [selector]` | 抓取网页内容 |
-| `links` | `links <url> [pattern]` | 提取页面链接 |
-| `test` | `test` | 运行预设测试用例 |
-| `help` | `help` | 显示帮助信息 |
-| `exit` | `exit` | 退出调试器 |
+| 命令    | 语法                              | 描述             |
+| ------- | --------------------------------- | ---------------- |
+| `list`  | `list`                            | 列出所有可用工具 |
+| `crawl` | `crawl <url> [format] [selector]` | 抓取网页内容     |
+| `links` | `links <url> [pattern]`           | 提取页面链接     |
+| `test`  | `test`                            | 运行预设测试用例 |
+| `help`  | `help`                            | 显示帮助信息     |
+| `exit`  | `exit`                            | 退出调试器       |
 
 #### 使用示例
 
@@ -58,14 +58,17 @@ node quick-debug-test.js
 提供断点调试和变量检查功能。
 
 #### 配置文件位置
+
 `.vscode/launch.json`
 
 #### 可用配置
+
 - **Debug MCP Server** - 调试主服务器
 - **Debug Test Crawl** - 调试抓取测试
 - **Debug Interactive** - 调试交互式工具
 
 #### 使用方法
+
 1. 在VS Code中打开项目
 2. 按F5或点击调试按钮
 3. 选择相应的调试配置
@@ -85,6 +88,7 @@ npm start
 ```
 
 #### 日志级别
+
 - **INFO** - 基本信息
 - **DEBUG** - 详细调试信息
 - **ERROR** - 错误信息
@@ -94,16 +98,19 @@ npm start
 ### 1. 服务器启动失败
 
 #### 检查依赖
+
 ```bash
 npm install
 ```
 
 #### 检查构建
+
 ```bash
 npm run build
 ```
 
 #### 查看详细错误
+
 ```bash
 DEBUG=true node dist/index.js 2>&1 | tee debug.log
 ```
@@ -111,11 +118,13 @@ DEBUG=true node dist/index.js 2>&1 | tee debug.log
 ### 2. 网页抓取失败
 
 #### 网络连接测试
+
 ```bash
 curl -I https://example.com
 ```
 
 #### User-Agent问题
+
 某些网站可能阻止默认的User-Agent，可以自定义：
 
 ```json
@@ -126,6 +135,7 @@ curl -I https://example.com
 ```
 
 #### 超时问题
+
 增加超时时间：
 
 ```json
@@ -138,10 +148,12 @@ curl -I https://example.com
 ### 3. CSS选择器问题
 
 #### 验证选择器
+
 1. 在浏览器开发者工具中测试选择器
 2. 使用在线CSS选择器测试工具
 
 #### 调试选择器匹配
+
 在代码中添加调试信息：
 
 ```typescript
@@ -152,6 +164,7 @@ console.error('Debug: 元素内容预览', targetElement.text().substring(0, 100
 ### 4. Markdown转换问题
 
 #### 测试转换功能
+
 ```javascript
 import TurndownService from 'turndown';
 const turndown = new TurndownService();
@@ -159,12 +172,13 @@ console.log(turndown.turndown('<h1>Test</h1><p>Content</p>'));
 ```
 
 #### 自定义转换规则
+
 ```javascript
 turndown.addRule('customRule', {
   filter: 'div',
-  replacement: function(content) {
+  replacement: function (content) {
     return content;
-  }
+  },
 });
 ```
 
@@ -252,22 +266,26 @@ npm install winston
 ## 调试最佳实践
 
 ### 1. 逐步调试
+
 1. 先测试基本HTTP请求
 2. 再测试HTML解析
 3. 最后测试Markdown转换
 
 ### 2. 使用调试器
+
 - 优先使用交互式调试器
 - 对复杂问题使用VS Code断点调试
 - 生产环境使用日志调试
 
 ### 3. 保存调试信息
+
 ```bash
 # 保存调试日志
 DEBUG=true npm start 2>&1 | tee debug-$(date +%Y%m%d-%H%M%S).log
 ```
 
 ### 4. 版本控制调试配置
+
 - 将调试配置文件加入版本控制
 - 为不同环境创建不同的调试配置
 

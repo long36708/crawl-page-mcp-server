@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 
 const filePath = path.join(__dirname, '../dist/index.js');
 const content = fs.readFileSync(filePath, 'utf8');
@@ -10,7 +10,7 @@ const content = fs.readFileSync(filePath, 'utf8');
 const cleanContent = content.replace(/^#!.*\n?/, '');
 
 // 添加正确的shebang
-const finalContent = '#!/usr/bin/env node\n' + cleanContent;
+const finalContent = `#!/usr/bin/env node\n${cleanContent}`;
 
 fs.writeFileSync(filePath, finalContent);
 console.log('Shebang added successfully!');

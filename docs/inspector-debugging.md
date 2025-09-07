@@ -5,16 +5,19 @@ MCP Inspector 是官方提供的可视化调试工具，提供了比命令行更
 ## 安装和启动
 
 ### 1. 确保项目已构建
+
 ```bash
 npm run build
 ```
 
 ### 2. 启动 MCP Inspector
+
 ```bash
 npx @modelcontextprotocol/inspector
 ```
 
 ### 3. 在浏览器中打开
+
 Inspector 会自动在浏览器中打开调试界面，通常是 `http://localhost:5173`
 
 ## 配置服务器
@@ -32,6 +35,7 @@ Inspector 会自动在浏览器中打开调试界面，通常是 `http://localho
 **服务器名称：** `crawl-page`
 
 **命令配置：**
+
 - **Command:** `node`
 - **Args:** `["./dist/index.js"]`
 - **Working Directory:** `/Users/longmo/code/crawl-page-mcp-server`
@@ -42,6 +46,7 @@ Inspector 会自动在浏览器中打开调试界面，通常是 `http://localho
 如果项目已发布到 npm：
 
 **命令配置：**
+
 - **Command:** `npx`
 - **Args:** `["crawl-page-mcp-server"]`
 - **Environment Variables:** `{"DEBUG": "true"}`
@@ -57,6 +62,7 @@ Inspector 会自动在浏览器中打开调试界面，通常是 `http://localho
 ### 2. 查看工具列表
 
 连接成功后，Inspector 会自动显示：
+
 - 可用工具列表（crawl_page, extract_links）
 - 每个工具的详细参数说明
 - 输入输出格式定义
@@ -90,6 +96,7 @@ Inspector 会自动在浏览器中打开调试界面，通常是 `http://localho
 ### 4. 实时日志查看
 
 Inspector 提供实时日志功能：
+
 - 在 "Logs" 标签页中查看服务器日志
 - 可以看到详细的调试信息（如果启用了 DEBUG=true）
 - 包括请求/响应的完整信息
@@ -97,6 +104,7 @@ Inspector 提供实时日志功能：
 ### 5. 错误调试
 
 当工具调用失败时：
+
 1. 查看 "Logs" 标签页中的错误信息
 2. 检查参数格式是否正确
 3. 验证网络连接和URL有效性
@@ -106,6 +114,7 @@ Inspector 提供实时日志功能：
 ### 1. 参数验证
 
 Inspector 会自动验证输入参数：
+
 - 必需参数检查
 - 数据类型验证
 - 枚举值验证
@@ -113,6 +122,7 @@ Inspector 会自动验证输入参数：
 ### 2. 响应格式化
 
 Inspector 自动格式化响应内容：
+
 - JSON 语法高亮
 - 可折叠的对象结构
 - 错误信息突出显示
@@ -120,6 +130,7 @@ Inspector 自动格式化响应内容：
 ### 3. 历史记录
 
 Inspector 保存调用历史：
+
 - 查看之前的工具调用
 - 重复执行相同的调用
 - 比较不同参数的结果
@@ -184,6 +195,7 @@ Inspector 保存调用历史：
 ## 性能监控
 
 Inspector 提供性能监控功能：
+
 - 工具调用耗时统计
 - 内存使用情况
 - 网络请求时间分析
@@ -193,6 +205,7 @@ Inspector 提供性能监控功能：
 ### 1. 连接失败
 
 如果无法连接到服务器：
+
 1. 检查项目是否已构建：`npm run build`
 2. 验证配置文件路径是否正确
 3. 查看 Inspector 控制台错误信息
@@ -200,6 +213,7 @@ Inspector 提供性能监控功能：
 ### 2. 工具调用失败
 
 如果工具调用失败：
+
 1. 检查参数格式是否正确
 2. 查看服务器日志中的错误信息
 3. 验证网络连接和URL有效性
@@ -207,21 +221,22 @@ Inspector 提供性能监控功能：
 ### 3. 响应异常
 
 如果响应内容异常：
+
 1. 检查目标网站是否可访问
 2. 验证CSS选择器是否有效
 3. 尝试不同的User-Agent设置
 
 ## 与其他调试工具对比
 
-| 功能 | MCP Inspector | 自定义调试器 | VS Code调试 |
-|------|---------------|--------------|-------------|
-| 可视化界面 | ✅ | ❌ | ✅ |
-| 实时日志 | ✅ | ✅ | ✅ |
-| 参数验证 | ✅ | ❌ | ❌ |
-| 历史记录 | ✅ | ❌ | ❌ |
-| 响应格式化 | ✅ | ❌ | ❌ |
-| 断点调试 | ❌ | ❌ | ✅ |
-| 性能监控 | ✅ | ❌ | ✅ |
+| 功能       | MCP Inspector | 自定义调试器 | VS Code调试 |
+| ---------- | ------------- | ------------ | ----------- |
+| 可视化界面 | ✅            | ❌           | ✅          |
+| 实时日志   | ✅            | ✅           | ✅          |
+| 参数验证   | ✅            | ❌           | ❌          |
+| 历史记录   | ✅            | ❌           | ❌          |
+| 响应格式化 | ✅            | ❌           | ❌          |
+| 断点调试   | ❌            | ❌           | ✅          |
+| 性能监控   | ✅            | ❌           | ✅          |
 
 ## 最佳实践
 
@@ -267,8 +282,8 @@ inspector-test.json
 ```javascript
 // 使用 Inspector API 进行自动化测试
 const testCases = [
-  { url: "https://example1.com", format: "markdown" },
-  { url: "https://example2.com", format: "text" },
+  { url: 'https://example1.com', format: 'markdown' },
+  { url: 'https://example2.com', format: 'text' },
   // ...
 ];
 
@@ -285,3 +300,4 @@ const testCases = [
   run: |
     npm run build
     npx @modelcontextprotocol/inspector --config inspector-config.json --test
+```

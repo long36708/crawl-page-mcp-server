@@ -5,9 +5,9 @@
  * 测试修复后的模块加载和路径处理
  */
 
-const { spawn } = require('child_process');
-const path = require('path');
-const fs = require('fs');
+const { spawn } = require('node:child_process');
+const fs = require('node:fs');
+const path = require('node:path');
 
 console.log('🧪 Windows兼容性测试开始...\n');
 
@@ -51,7 +51,7 @@ if (fs.existsSync(cmdFile)) {
 console.log('\n5️⃣ 测试基本运行...');
 const child = spawn('node', [distFile, '--help'], {
   stdio: 'pipe',
-  timeout: 5000
+  timeout: 5000,
 });
 
 let output = '';
@@ -74,7 +74,7 @@ child.on('close', (code) => {
       console.log('错误输出:', errorOutput);
     }
   }
-  
+
   console.log('\n🎉 Windows兼容性测试完成!');
   console.log('\n📋 修复总结:');
   console.log('- ✅ 移除了源码中的.js扩展名');

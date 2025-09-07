@@ -3,6 +3,7 @@
 ## 🚨 问题诊断
 
 ### 主要问题
+
 1. **模块系统混合**: 源码ES modules + 构建CommonJS + TypeScript ESNext配置
 2. **Windows路径问题**: 反斜杠路径分隔符可能导致模块解析失败
 3. **Shebang兼容性**: Windows对shebang处理不同
@@ -13,6 +14,7 @@
 ### 方案1: 完全CommonJS化 (推荐)
 
 #### 1.1 修改源码导入语句
+
 ```typescript
 // 将 src/index.ts 中的导入改为:
 import { Server } from '@modelcontextprotocol/sdk/server/index';
@@ -24,11 +26,12 @@ import {
 ```
 
 #### 1.2 更新TypeScript配置
+
 ```json
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "CommonJS",  // 改为CommonJS
+    "module": "CommonJS", // 改为CommonJS
     "moduleResolution": "node",
     "outDir": "./dist",
     "rootDir": "./src",
@@ -44,6 +47,7 @@ import {
 ```
 
 #### 1.3 优化构建脚本
+
 ```json
 {
   "scripts": {
@@ -55,6 +59,7 @@ import {
 ### 方案2: 纯ES Modules
 
 #### 2.1 修改package.json
+
 ```json
 {
   "type": "module",
@@ -66,6 +71,7 @@ import {
 ```
 
 #### 2.2 更新shebang脚本
+
 ```javascript
 // scripts/add-shebang.js 改为ES module
 import fs from 'fs';
@@ -79,6 +85,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 ### 方案3: Windows特定修复
 
 #### 3.1 添加Windows检测
+
 ```typescript
 // 在src/index.ts中添加
 const isWindows = process.platform === 'win32';
@@ -90,6 +97,7 @@ function normalizePath(filePath: string): string {
 ```
 
 #### 3.2 创建Windows启动脚本
+
 ```batch
 @echo off
 REM bin/crawl-page-mcp-server.cmd

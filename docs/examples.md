@@ -15,6 +15,7 @@
 ```
 
 **输出：**
+
 ```json
 {
   "url": "https://example.com",
@@ -54,6 +55,7 @@
 ```
 
 **输出：**
+
 ```json
 {
   "url": "https://example.com",
@@ -91,6 +93,7 @@
 ```
 
 **用途：**
+
 - 离线文档存储
 - 文档内容分析
 - 知识库构建
@@ -112,6 +115,7 @@
 ```
 
 **用途：**
+
 - 新闻聚合
 - 内容分析
 - 自动摘要生成
@@ -131,6 +135,7 @@
 ```
 
 **用途：**
+
 - 学术资源收集
 - 论文批量下载
 - 研究资料整理
@@ -152,6 +157,7 @@
 ```
 
 **用途：**
+
 - 技术文章收集
 - 知识管理
 - 内容备份
@@ -172,6 +178,7 @@
 ```
 
 **用途：**
+
 - 价格监控
 - 产品信息收集
 - 竞品分析
@@ -356,7 +363,7 @@ await client.connect();
 
 const result = await client.callTool('crawl_page', {
   url: 'https://example.com',
-  format: 'markdown'
+  format: 'markdown',
 });
 
 console.log(result.content);
@@ -372,12 +379,12 @@ async function crawlWithRetry(url, maxRetries = 3) {
     try {
       const result = await client.callTool('crawl_page', {
         url,
-        timeout: 10000 + (i * 5000) // 递增超时时间
+        timeout: 10000 + i * 5000, // 递增超时时间
       });
       return result;
     } catch (error) {
       if (i === maxRetries - 1) throw error;
-      await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+      await new Promise((resolve) => setTimeout(resolve, 1000 * (i + 1)));
     }
   }
 }
@@ -393,7 +400,7 @@ async function crawlMultiplePages(urls) {
       const result = await client.callTool('crawl_page', { url });
       results.push(result);
       // 添加延迟避免过于频繁的请求
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
     } catch (error) {
       console.error(`Failed to crawl ${url}:`, error);
     }
@@ -407,16 +414,17 @@ async function crawlMultiplePages(urls) {
 ```javascript
 function validateContent(result) {
   const content = JSON.parse(result.content[0].text);
-  
+
   // 检查内容长度
   if (content.contentLength < 100) {
     console.warn('Content seems too short');
   }
-  
+
   // 检查是否包含错误页面标识
   if (content.title.includes('404') || content.title.includes('Error')) {
     throw new Error('Page not found or error page');
   }
-  
+
   return content;
 }
+```

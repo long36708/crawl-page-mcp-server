@@ -2,15 +2,25 @@
   "name": "crawl-page-mcp-server",
   "version": "1.0.6",
   "description": "MCP server for crawling web pages and converting to markdown",
-  "main": "dist/index.js",
-
-  "bin": {
-    "crawl-page-mcp-server": "./dist/index.js",
-    "crawl-page-mcp-server.cmd": "./bin/crawl-page-mcp-server.cmd"
+  "keywords": [
+    "mcp",
+    "web-crawling",
+    "markdown",
+    "scraping"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/long36708/crawl-page-mcp-server.git"
   },
+  "license": "MIT",
+  "author": "longmo",
   "scripts": {
     "build": "npm run build:bundle",
     "build:tsc": "tsc",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
+    "prettier": "prettier --check .",
+    "prettier:fix": "prettier --write .",
     "build:bundle": "esbuild src/index.ts --bundle --platform=node --target=node18 --format=cjs --outfile=dist/index.js --external:@modelcontextprotocol/sdk --resolve-extensions=.ts,.js --main-fields=main,module --conditions=node && node scripts/add-shebang.js",
     "start": "node dist/index.js",
     "dev": "tsx src/index.ts",
@@ -25,26 +35,19 @@
     "debug:build": "npm run build && npm run debug",
     "prepublishOnly": "npm run build"
   },
-  "keywords": [
-    "mcp",
-    "web-crawling",
-    "markdown",
-    "scraping"
-  ],
-  "author": "longmo",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/long36708/crawl-page-mcp-server.git"
-  },
   "files": [
-    "dist/",
-    "bin/",
-    "test/",
     "README.md",
+    "bin/",
+    "dist/",
     "docs/",
-    "package.json"
+    "package.json",
+    "test/"
   ],
+  "bin": {
+    "crawl-page-mcp-server": "./dist/index.js",
+    "crawl-page-mcp-server.cmd": "./bin/crawl-page-mcp-server.cmd"
+  },
+  "main": "dist/index.js",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^0.4.0",
     "axios": "^1.6.0",
@@ -56,6 +59,7 @@
     "@types/node": "^20.0.0",
     "@types/turndown": "^5.0.4",
     "esbuild": "^0.25.9",
+    "longmo-lint-configs": "^1.0.17",
     "tsx": "^4.0.0",
     "typescript": "^5.0.0"
   }

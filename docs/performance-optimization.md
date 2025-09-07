@@ -18,7 +18,7 @@ httpAgent: new Agent({
   maxSockets: 10,
   maxFreeSockets: 5,
   timeout: 60000,
-})
+});
 ```
 
 ### 2. 请求优化
@@ -35,7 +35,7 @@ httpAgent: new Agent({
 ```json
 {
   "url": "https://example.com",
-  "useCache": true  // 默认启用，5分钟TTL
+  "useCache": true // 默认启用，5分钟TTL
 }
 ```
 
@@ -49,10 +49,10 @@ httpAgent: new Agent({
 
 根据需求选择最适合的格式：
 
-| 格式 | 性能 | 用途 |
-|------|------|------|
-| `text` | 最快 | 纯文本提取 |
-| `html` | 中等 | 保留结构 |
+| 格式       | 性能 | 用途       |
+| ---------- | ---- | ---------- |
+| `text`     | 最快 | 纯文本提取 |
+| `html`     | 中等 | 保留结构   |
 | `markdown` | 较慢 | 格式化输出 |
 
 ## 使用建议
@@ -136,10 +136,11 @@ npm run test:performance
 **症状**: `timeout of 10000ms exceeded`
 
 **解决方案**:
+
 ```json
 {
-  "timeout": 30000,  // 增加超时时间
-  "format": "text"   // 使用更快的格式
+  "timeout": 30000, // 增加超时时间
+  "format": "text" // 使用更快的格式
 }
 ```
 
@@ -148,10 +149,11 @@ npm run test:performance
 **症状**: 内存使用过高
 
 **解决方案**:
+
 ```json
 {
-  "selector": ".main-content",  // 限制解析范围
-  "format": "text"              // 避免复杂转换
+  "selector": ".main-content", // 限制解析范围
+  "format": "text" // 避免复杂转换
 }
 ```
 
@@ -160,6 +162,7 @@ npm run test:performance
 **症状**: 网络请求时间过长
 
 **解决方案**:
+
 - 检查网络连接
 - 使用CDN或镜像站点
 - 启用缓存机制
@@ -191,13 +194,13 @@ npm run test:performance
 
 ```javascript
 // 避免：连续请求同一域名
-crawl("https://site.com/page1")
-crawl("https://site.com/page2")
+crawl('https://site.com/page1');
+crawl('https://site.com/page2');
 
 // 推荐：添加延迟
-crawl("https://site.com/page1")
-await delay(1000)
-crawl("https://site.com/page2")
+crawl('https://site.com/page1');
+await delay(1000);
+crawl('https://site.com/page2');
 ```
 
 ### 3. 错误重试
@@ -208,11 +211,11 @@ async function crawlWithRetry(url, maxRetries = 3) {
   for (let i = 0; i < maxRetries; i++) {
     try {
       return await crawl(url, {
-        timeout: 10000 + (i * 5000)  // 递增超时
+        timeout: 10000 + i * 5000, // 递增超时
       });
     } catch (error) {
       if (i === maxRetries - 1) throw error;
-      await delay(Math.pow(2, i) * 1000);  // 指数退避
+      await delay(Math.pow(2, i) * 1000); // 指数退避
     }
   }
 }
@@ -235,11 +238,11 @@ DEBUG=true npm start
 
 ### 3. 性能基准
 
-| 操作 | 目标时间 | 说明 |
-|------|----------|------|
-| 简单页面 | <3秒 | 基本HTML页面 |
-| 复杂页面 | <10秒 | 大型网站 |
-| 缓存命中 | <100ms | 来自缓存的响应 |
+| 操作     | 目标时间 | 说明           |
+| -------- | -------- | -------------- |
+| 简单页面 | <3秒     | 基本HTML页面   |
+| 复杂页面 | <10秒    | 大型网站       |
+| 缓存命中 | <100ms   | 来自缓存的响应 |
 
 ## 配置文件
 
@@ -256,3 +259,4 @@ DEBUG=true npm start
     "defaultTTL": 300000
   }
 }
+```

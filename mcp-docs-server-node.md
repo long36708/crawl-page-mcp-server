@@ -11,6 +11,7 @@
 许多 LLM 目前不具备获取天气预报和恶劣天气警报的能力。让我们使用 MCP 来解决这个问题！
 
 我们将构建一个服务器，它暴露两个 tools：
+
 - `get-alerts` - 获取天气警报
 - `get-forecast` - 获取天气预报
 
@@ -31,6 +32,7 @@ MCP 服务器可以提供三种主要类型的能力：
 ## 前提知识
 
 本快速入门假设你熟悉：
+
 - TypeScript
 - LLMs，如 Claude
 
@@ -43,6 +45,7 @@ MCP 服务器可以提供三种主要类型的能力：
 首先，如果你还没有安装 Node.js 和 npm，请安装它们。你可以从 [nodejs.org](https://nodejs.org) 下载它们。
 
 验证你的 Node.js 安装：
+
 ```bash
 node --version
 npm --version
@@ -73,9 +76,7 @@ npm install --save-dev typescript @types/node
   "scripts": {
     "build": "tsc && chmod 755 build/index.js"
   },
-  "files": [
-    "build"
-  ]
+  "files": ["build"]
 }
 ```
 
@@ -108,17 +109,17 @@ npm install --save-dev typescript @types/node
 将这些添加到你的 `src/index.ts` 文件的顶部：
 
 ```typescript
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { z } from "zod";
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { z } from 'zod';
 
-const NWS_API_BASE = "https://api.weather.gov";
-const USER_AGENT = "weather-app/1.0";
+const NWS_API_BASE = 'https://api.weather.gov';
+const USER_AGENT = 'weather-app/1.0';
 
 // 创建 server instance
 const server = new McpServer({
-  name: "weather",
-  version: "1.0.0",
+  name: 'weather',
+  version: '1.0.0',
   capabilities: {
     resources: {},
     tools: {},
@@ -134,8 +135,8 @@ const server = new McpServer({
 // Helper function 用于发送 NWS API 请求
 async function makeNWSRequest<T>(url: string): Promise<T | null> {
   const headers = {
-    "User-Agent": USER_AGENT,
-    Accept: "application/geo+json",
+    'User-Agent': USER_AGENT,
+    Accept: 'application/geo+json',
   };
 
   try {
@@ -145,7 +146,7 @@ async function makeNWSRequest<T>(url: string): Promise<T | null> {
     }
     return (await response.json()) as T;
   } catch (error) {
-    console.error("Error making NWS request:", error);
+    console.error('Error making NWS request:', error);
     return null;
   }
 }
@@ -164,13 +165,13 @@ interface AlertFeature {
 function formatAlert(feature: AlertFeature): string {
   const props = feature.properties;
   return [
-    `Event: ${props.event || "Unknown"}`,
-    `Area: ${props.areaDesc || "Unknown"}`,
-    `Severity: ${props.severity || "Unknown"}`,
-    `Status: ${props.status || "Unknown"}`,
-    `Headline: ${props.headline || "No headline"}`,
-    "---",
-  ].join("\n");
+    `Event: ${props.event || 'Unknown'}`,
+    `Area: ${props.areaDesc || 'Unknown'}`,
+    `Severity: ${props.severity || 'Unknown'}`,
+    `Status: ${props.status || 'Unknown'}`,
+    `Headline: ${props.headline || 'No headline'}`,
+    '---',
+  ].join('\n');
 }
 
 interface ForecastPeriod {
@@ -206,10 +207,10 @@ Tool execution handler 负责实际执行每个 tool 的逻辑。让我们添加
 ```typescript
 // 注册天气 tools
 server.tool(
-  "get-alerts",
-  "获取某个州的天气警报",
+  'get-alerts',
+  '获取某个州的天气警报',
   {
-    state: z.string().length(2).describe("两个字母的州代码（例如 CA、NY）"),
+    state: z.string().length(2).describe('两个字母的州代码（例如 CA、NY）'),
   },
   async ({ state }) => {
     const stateCode = state.toUpperCase();
@@ -220,8 +221,8 @@ server.tool(
       return {
         content: [
           {
-            type: "text",
-            text: "未能检索警报数据",
+            type: 'text',
+            text: '未能检索警报数据',
           },
         ],
       };
@@ -232,7 +233,7 @@ server.tool(
       return {
         content: [
           {
-            type: "text",
+            type: 'text',
             text: `No active alerts for ${stateCode}`,
           },
         ],
@@ -240,12 +241,12 @@ server.tool(
     }
 
     const formattedAlerts = features.map(formatAlert);
-    const alertsText = `Active alerts for ${stateCode}:\n\n${formattedAlerts.join("\n")}`;
+    const alertsText = `Active alerts for ${stateCode}:\n\n${formattedAlerts.join('\n')}`;
 
     return {
       content: [
         {
-          type: "text",
+          type: 'text',
           text: alertsText,
         },
       ],
@@ -254,11 +255,11 @@ server.tool(
 );
 
 server.tool(
-  "get-forecast",
-  "获取某个位置的天气预报",
+  'get-forecast',
+  '获取某个位置的天气预报',
   {
-    latitude: z.number().min(-90).max(90).describe("位置的纬度"),
-    longitude: z.number().min(-180).max(180).describe("位置的经度"),
+    latitude: z.number().min(-90).max(90).describe('位置的纬度'),
+    longitude: z.number().min(-180).max(180).describe('位置的经度'),
   },
   async ({ latitude, longitude }) => {
     // 获取网格点数据
@@ -269,7 +270,7 @@ server.tool(
       return {
         content: [
           {
-            type: "text",
+            type: 'text',
             text: `Failed to retrieve grid point data for coordinates: ${latitude}, ${longitude}. This location may not be supported by the NWS API (only US locations are supported).`,
           },
         ],
@@ -281,8 +282,8 @@ server.tool(
       return {
         content: [
           {
-            type: "text",
-            text: "Failed to get forecast URL from grid point data",
+            type: 'text',
+            text: 'Failed to get forecast URL from grid point data',
           },
         ],
       };
@@ -294,8 +295,8 @@ server.tool(
       return {
         content: [
           {
-            type: "text",
-            text: "Failed to retrieve forecast data",
+            type: 'text',
+            text: 'Failed to retrieve forecast data',
           },
         ],
       };
@@ -306,8 +307,8 @@ server.tool(
       return {
         content: [
           {
-            type: "text",
-            text: "No forecast periods available",
+            type: 'text',
+            text: 'No forecast periods available',
           },
         ],
       };
@@ -316,20 +317,20 @@ server.tool(
     // 格式化预报 periods
     const formattedForecast = periods.map((period: ForecastPeriod) =>
       [
-        `${period.name || "Unknown"}:`,
-        `Temperature: ${period.temperature || "Unknown"}°${period.temperatureUnit || "F"}`,
-        `Wind: ${period.windSpeed || "Unknown"} ${period.windDirection || ""}`,
-        `${period.shortForecast || "No forecast available"}`,
-        "---",
-      ].join("\n"),
+        `${period.name || 'Unknown'}:`,
+        `Temperature: ${period.temperature || 'Unknown'}°${period.temperatureUnit || 'F'}`,
+        `Wind: ${period.windSpeed || 'Unknown'} ${period.windDirection || ''}`,
+        `${period.shortForecast || 'No forecast available'}`,
+        '---',
+      ].join('\n'),
     );
 
-    const forecastText = `Forecast for ${latitude}, ${longitude}:\n\n${formattedForecast.join("\n")}`;
+    const forecastText = `Forecast for ${latitude}, ${longitude}:\n\n${formattedForecast.join('\n')}`;
 
     return {
       content: [
         {
-          type: "text",
+          type: 'text',
           text: forecastText,
         },
       ],
@@ -346,11 +347,11 @@ server.tool(
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error("Weather MCP Server running on stdio");
+  console.error('Weather MCP Server running on stdio');
 }
 
 main().catch((error) => {
-  console.error("Fatal error in main():", error);
+  console.error('Fatal error in main():', error);
   process.exit(1);
 });
 ```
@@ -389,6 +390,7 @@ code ~/Library/Application\ Support/Claude/claude_desktop_config.json
 ```
 
 这告诉 Claude for Desktop：
+
 - 有一个名为 "weather" 的 MCP server
 - 通过运行 `node /ABSOLUTE/PATH/TO/PARENT/FOLDER/weather/build/index.js` 来启动它
 
@@ -421,6 +423,7 @@ code ~/Library/Application\ Support/Claude/claude_desktop_config.json
 ## 故障排除
 
 如果遇到问题，请检查：
+
 - Node.js 版本是否为 16 或更高
 - 是否正确运行了 `npm run build`
 - Claude Desktop 配置文件路径是否正确
@@ -434,4 +437,5 @@ code ~/Library/Application\ Support/Claude/claude_desktop_config.json
 - 探索其他 MCP 功能如 Resources 和 Prompts
 
 ---
-*本文档基于 https://mcp-docs.cn/quickstart/server#node 页面内容整理*
+
+_本文档基于 https://mcp-docs.cn/quickstart/server#node 页面内容整理_

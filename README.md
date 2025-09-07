@@ -72,6 +72,7 @@ npm run debug
 抓取指定URL的页面内容。
 
 **参数：**
+
 - `url` (必需): 要抓取的网页URL地址
 - `format` (可选): 输出格式，可选值：`html`、`text`、`markdown`（默认）
 - `selector` (可选): CSS选择器，用于提取页面特定部分的内容
@@ -79,6 +80,7 @@ npm run debug
 - `userAgent` (可选): 自定义User-Agent字符串
 
 **示例：**
+
 ```json
 {
   "url": "https://example.com",
@@ -93,12 +95,14 @@ npm run debug
 从指定URL页面中提取所有链接。
 
 **参数：**
+
 - `url` (必需): 要分析的网页URL地址
 - `baseUrl` (可选): 基础URL，用于解析相对链接
 - `filterPattern` (可选): 正则表达式模式，用于过滤链接
 - `timeout` (可选): 请求超时时间（毫秒），默认10秒
 
 **示例：**
+
 ```json
 {
   "url": "https://example.com",
@@ -144,6 +148,7 @@ npm run debug
 ## 配置MCP客户端
 
 ### 使用 npx（推荐）
+
 ```json
 {
   "mcpServers": {
@@ -156,6 +161,7 @@ npm run debug
 ```
 
 ### 使用全局安装
+
 ```json
 {
   "mcpServers": {
@@ -167,6 +173,7 @@ npm run debug
 ```
 
 ### 使用本地开发版本
+
 ```json
 {
   "mcpServers": {
@@ -192,12 +199,14 @@ npm run debug
 本项目使用 **esbuild** 将所有第三方依赖打包到单个可执行文件中，用户无需单独安装 axios、cheerio、turndown 等依赖。
 
 ### 打包策略
+
 - **包含的依赖**: axios, cheerio, turndown, url 等所有运行时依赖
 - **外部依赖**: 仅保留 @modelcontextprotocol/sdk 作为外部依赖
 - **文件大小**: 约 3.0MB（包含所有依赖）
 - **格式**: CommonJS with shebang，可直接执行
 
 ### 构建过程
+
 ```bash
 # 开发时使用 tsx 直接运行 TypeScript
 npm run dev
@@ -207,11 +216,13 @@ npm run build
 ```
 
 ### 为什么使用 esbuild 而不是 tsx？
+
 - **tsx**: 仅为 TypeScript 运行时工具，不能打包依赖
 - **tsc**: TypeScript 编译器，只编译不打包，依赖仍为外部引用
 - **esbuild**: 真正的打包工具，能将依赖打包到单个文件中
 
 这种方案确保了：
+
 - ✅ **用户体验**: 只需安装一个包即可使用
 - ✅ **依赖管理**: 避免版本冲突和依赖缺失
 - ✅ **部署简单**: 单文件部署，无需额外配置
@@ -246,6 +257,7 @@ npm test
 ## 调试和测试
 
 ### 使用 MCP Inspector（推荐）
+
 ```bash
 # 启动可视化调试工具
 npm run inspector
@@ -258,11 +270,13 @@ npx @modelcontextprotocol/inspector
 ```
 
 ### 使用自定义调试器
+
 ```bash
 npm run debug
 ```
 
 ### 快速功能测试
+
 ```bash
 npm run test:crawl
 ```
