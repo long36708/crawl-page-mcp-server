@@ -14,26 +14,10 @@
   },
   "license": "MIT",
   "author": "longmo",
-  "scripts": {
-    "build": "npm run build:bundle",
-    "build:tsc": "tsc",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
-    "prettier": "prettier --check .",
-    "prettier:fix": "prettier --write .",
-    "build:bundle": "esbuild src/index.ts --bundle --platform=node --target=node18 --format=cjs --outfile=dist/index.js --external:@modelcontextprotocol/sdk --resolve-extensions=.ts,.js --main-fields=main,module --conditions=node && node scripts/add-shebang.js",
-    "start": "node dist/index.js",
-    "dev": "tsx src/index.ts",
-    "debug": "node test/debug-server.js",
-    "inspector": "./start-inspector-basic.sh",
-    "inspector:smart": "./start-inspector-smart.sh",
-    "inspector:simple": "npx @modelcontextprotocol/inspector",
-    "test": "node test/quick-test.mjs",
-    "test:crawl": "node test/quick-test.mjs",
-    "test:performance": "node test/performance-test.js",
-    "test:large": "node test/test-large-content.mjs",
-    "debug:build": "npm run build && npm run debug",
-    "prepublishOnly": "npm run build"
+  "main": "dist/index.js",
+  "bin": {
+    "crawl-page-mcp-server": "./dist/index.js",
+    "crawl-page-mcp-server.cmd": "./bin/crawl-page-mcp-server.cmd"
   },
   "files": [
     "README.md",
@@ -43,23 +27,46 @@
     "package.json",
     "test/"
   ],
-  "bin": {
-    "crawl-page-mcp-server": "./dist/index.js",
-    "crawl-page-mcp-server.cmd": "./bin/crawl-page-mcp-server.cmd"
+  "scripts": {
+    "build": "npm run build:bundle",
+    "build:bundle": "esbuild src/index.ts --bundle --platform=node --target=node18 --format=cjs --outfile=dist/index.js --external:@modelcontextprotocol/sdk --resolve-extensions=.ts,.js --main-fields=main,module --conditions=node && node scripts/add-shebang.js",
+    "build:tsc": "tsc",
+    "debug": "node test/debug-server.js",
+    "debug:build": "npm run build && npm run debug",
+    "dev": "tsx src/index.ts",
+    "inspector": "./start-inspector-basic.sh",
+    "inspector:simple": "npx @modelcontextprotocol/inspector",
+    "inspector:smart": "./start-inspector-smart.sh",
+    "preinstall": "npx only-allow pnpm",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
+    "nmi": "pnpx node-modules-inspector",
+    "prepublishOnly": "npm run build",
+    "prettier": "prettier --check .",
+    "prettier:fix": "prettier --write .",
+    "sort": "pnpx sort-package-json",
+    "start": "node dist/index.js",
+    "test": "node test/quick-test.mjs",
+    "test:crawl": "node test/quick-test.mjs",
+    "test:large": "node test/test-large-content.mjs",
+    "test:performance": "node test/performance-test.js",
+    "update:deps": "pnpx taze -w"
   },
-  "main": "dist/index.js",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^0.4.0",
     "axios": "^1.6.0",
     "cheerio": "^1.0.0-rc.12",
-    "turndown": "^7.1.2",
+    "turndown": "^7.2.1",
     "url": "^0.11.3"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
     "@types/turndown": "^5.0.4",
     "esbuild": "^0.25.9",
+    "eslint": "^9.35.0",
     "longmo-lint-configs": "^1.0.17",
+    "prettier": "^3.6.2",
+    "stylelint": "^16.23.1",
     "tsx": "^4.0.0",
     "typescript": "^5.0.0"
   }

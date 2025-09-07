@@ -153,6 +153,7 @@ npm run debug
 {
   "mcpServers": {
     "crawl-page": {
+      "type": "stdio",
       "command": "npx",
       "args": ["crawl-page-mcp-server"]
     }
@@ -166,6 +167,7 @@ npm run debug
 {
   "mcpServers": {
     "crawl-page": {
+      "type": "stdio",
       "command": "crawl-page-mcp"
     }
   }

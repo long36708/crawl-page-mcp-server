@@ -162,7 +162,7 @@ class CrawlPageServer {
     const parseStartTime = Date.now();
     const $ = cheerio.load(html, {
       // 优化选项
-      xmlMode: false,
+      xml: false,
     });
 
     // 如果指定了选择器，只提取匹配的内容
